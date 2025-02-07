@@ -23,16 +23,15 @@
                 <div class="sidebar-brand-text mx-3">Tienda </div>
             </a>
 
-            <!-- Divider -->
-            <hr class="sidebar-divider my-0">
+
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item">
-                <a class="nav-link" href="index.html">
+                <a class="nav-link" href="@Url.Action("Index","Home")">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Dashboard</span>
                 </a>
-                <a class="nav-link" href="index.html">
+                <a class="nav-link" href="@Url.Action("Usuario","Home")">
                     <i class="fas fa-fw fa-user"></i>
                     <span>Usuario</span>
                 </a>
@@ -64,7 +63,7 @@
 
             <!-- Nav Item - Charts -->
             <li class="nav-item active">
-                <a class="nav-link" href="charts.html">
+                <a class="nav-link" href="@Url.Action("Categoria","Mantenedor")">
                     <i class="fas fa-fw fa-table"></i>
                     Categorias
                 </a>
@@ -72,13 +71,13 @@
 
             <!-- Nav Item - Tables -->
             <li class="nav-item">
-                <a class="nav-link" href="tables.html">
+                <a class="nav-link" href="@Url.Action("Marca","Mantenedor")">
                     <i class="fas fa-fw fa-bookmark"></i>
                     Marcas
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="tables.html">
+                <a class="nav-link" href="@Url.Action("Producto","Mantenedor")">
                     <i class="fas fa-fw fa-boxes"></i>
                    Producto
                 </a>

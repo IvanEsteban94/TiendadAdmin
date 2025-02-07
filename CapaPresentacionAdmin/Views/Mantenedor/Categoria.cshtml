@@ -1,0 +1,62 @@
+﻿
+@{
+    ViewBag.Title = "Categoria";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Categoria</h2>
+<!-- Botón para agregar un nueva Categorias -->
+<div class="mb-3">
+    <button class="btn btn-success" onclick="agregarProducto()">
+        <i class="fas fa-plus"></i> Agregar Categorias
+    </button>
+</div>
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Descripción</th>
+                        <th>Activo</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr>
+                        <td>Tiger Nixon</td>
+                        <td>✔️</td>
+                        <td class="d-flex gap-2">
+                            <button class="btn btn-warning btn-sm" onclick="editarProducto(1)">
+                                <i class="fas fa-edit"></i> Editar
+                            </button>
+                            <button class="btn btn-danger btn-sm" onclick="eliminarProducto(1)">
+                                <i class="fas fa-trash"></i> Eliminar
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Agregar FontAwesome para los íconos -->
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+<script>
+    function editarProducto(id) {
+        alert('Editar producto con ID: ' + id);
+    }
+
+    function eliminarProducto(id) {
+        if (confirm('¿Seguro que deseas eliminar el producto con ID: ' + id + '?')) {
+            alert('Producto eliminado.');
+        }
+    }
+</script>

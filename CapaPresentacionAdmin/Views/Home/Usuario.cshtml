@@ -1,14 +1,14 @@
-﻿
-@{
+﻿@{
     ViewBag.Title = "Usuario";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <h2>Usuario</h2>
+
 <div class="card shadow mb-4">
     <div class="card-header py-3 d-flex justify-content-between">
         <h6 class="m-0 font-weight-bold text-primary">Usuarios Registrados</h6>
-        <button class="btn btn-success btn-sm">Agregar Usuario</button>
+        <button class="btn btn-success btn-sm" id="btnAgregar">Agregar Usuario</button>
     </div>
     <div class="card-body">
         <div class="table-responsive">
@@ -24,33 +24,83 @@
                         <th>Acciones</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr>
-                        <td>Tiger</td>
-                        <td>Nixon</td>
-                        <td>tiger.nixon@example.com</td>
-                        <td>••••••••</td>
-                        <td><button class="btn btn-warning btn-sm">Reset</button></td>
-                        <td><input type="checkbox" class="form-check-input" checked></td>
-                        <td>
-                            <button class="btn btn-primary btn-sm">Editar</button>
-                            <button class="btn btn-danger btn-sm">Eliminar</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Garrett</td>
-                        <td>Winters</td>
-                        <td>garrett.winters@example.com</td>
-                        <td>••••••••</td>
-                        <td><button class="btn btn-warning btn-sm">Reset</button></td>
-                        <td><input type="checkbox" class="form-check-input"></td>
-                        <td>
-                            <button class="btn btn-primary btn-sm">Editar</button>
-                            <button class="btn btn-danger btn-sm">Eliminar</button>
-                        </td>
-                    </tr>
-                </tbody>
+                <tbody></tbody>
             </table>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <!-- Incluir jQuery y DataTables -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap4.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+
+    <script>
+        $(document).ready(function () {
+            console.log("Inicializando DataTable...");
+
+            // Verifica si DataTables está cargado correctamente
+            if (typeof $.fn.DataTable === "undefined") {
+                console.error("DataTables no está definido. Verifica los scripts.");
+                return;
+            }
+
+            // Inicializar DataTable
+            var tabladta = $('#dataTable').DataTable({
+                responsive: true,
+                ordering: false,
+                "ajax": {
+                    "url": "@Url.Action("ListaUsuario", "Home")",
+                    "type": "GET",
+                    "dataType": "json",
+                    "error": function (xhr, status, error) {
+                        console.error("Error cargando DataTable:", xhr.responseText);
+                    }
+                },
+                "columns": [
+                    { "data": "Nombre" },
+                    { "data": "Apellido" },
+                    { "data": "Correo" },
+                    { "data": "Clave" },
+                    { "data": "Reestablecer" },
+                    {
+                        "data": "Activo",
+                        "render": function (valor) {
+                            return valor ? "<span class='badge badge-success'>Sí</span>" : "<span class='badge badge-danger'>No</span>";
+                        }
+                    },
+                    {
+                        "data": null,
+                        "render": function (data, type, row) {
+                            return `<button class="btn btn-primary btn-sm btn-editar" data-id="${row.Id}">Editar</button>
+                                    <button class="btn btn-danger btn-sm btn-eliminar" data-id="${row.Id}">Eliminar</button>`;
+                        }
+                    }
+                ]
+            });
+
+            // Evento para el botón "Agregar Usuario"
+            $("#btnAgregar").click(function () {
+                alert("Aquí abrirías un modal o redirigirías a un formulario para agregar un usuario.");
+            });
+
+            // Evento para botón "Editar"
+            $("#dataTable tbody").on("click", ".btn-editar", function () {
+                var id = $(this).data("id");
+                alert("Editar usuario con ID: " + id);
+                // Aquí puedes redirigir a una página de edición o abrir un modal con el formulario de edición
+            });
+
+            // Evento para botón "Eliminar"
+            $("#dataTable tbody").on("click", ".btn-eliminar", function () {
+                var id = $(this).data("id");
+                if (confirm("¿Seguro que quieres eliminar este usuario?")) {
+                    console.log("Eliminando usuario con ID: " + id);
+                    // Aquí puedes hacer una petición AJAX para eliminar el usuario en el servidor
+                }
+            });
+        });
+    </script>
+}

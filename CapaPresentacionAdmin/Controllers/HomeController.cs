@@ -31,6 +31,66 @@ namespace CapaPresentacionAdmin.Controllers
             oLista = new CNUsuario().Listar();
             return Json(new { data=oLista} ,JsonRequestBehavior.AllowGet);
         }
+        
+
+        [HttpGet]
+        // Acción que devuelve la vista parcial del modal para agregar usuario
+        public ActionResult AgregarUsuario()
+        {
+            return PartialView();
+        }
+        [HttpPost]
+        public JsonResult AgregarUsuario(Usuario usuario)
+        {
+            if (usuario == null)
+            {
+                return Json(new { success = false, message = "Datos inválidos." });
+            }
+
+            bool respuesta = new CNUsuario().Registrar(usuario);
+
+            return Json(new
+            {
+                success = respuesta,
+                message = respuesta ? "Usuario agregado correctamente." : "Error al agregar usuario."
+            });
+        }
+
+        [HttpPost]
+        public JsonResult EditarUsuario(Usuario usuario)
+        {
+            if (usuario == null || usuario.IdUsuario == 0)
+            {
+                return Json(new { success = false, message = "Datos inválidos." });
+            }
+
+            bool respuesta = new CNUsuario().Editar(usuario);
+
+            return Json(new
+            {
+                success = respuesta,
+                message = respuesta ? "Usuario actualizado correctamente." : "Error al actualizar usuario."
+            });
+        }
+
+        [HttpPost]
+        public JsonResult EliminarUsuario(int id)
+        {
+            if (id <= 0)
+            {
+                return Json(new { success = false, message = "ID inválido." });
+            }
+
+            bool respuesta = new CNUsuario().Eliminar(id);
+
+            return Json(new
+            {
+                success = respuesta,
+                message = respuesta ? "Usuario eliminado correctamente." : "Error al eliminar usuario."
+            });
+        }
+
+
     }
 
 }

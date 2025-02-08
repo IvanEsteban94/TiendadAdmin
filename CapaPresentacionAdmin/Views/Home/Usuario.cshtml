@@ -1,4 +1,5 @@
-﻿@{
+﻿@using System.Web.Mvc
+@{
     ViewBag.Title = "Usuario";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -30,11 +31,21 @@
     </div>
 </div>
 
+<!-- Modal contenedor -->
+<div class="modal fade" id="modalAgregarUsuario" tabindex="-1" role="dialog" aria-labelledby="modalAgregarUsuarioLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" id="modalContent">
+            <!-- El contenido del modal se cargará aquí -->
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     <!-- Incluir jQuery y DataTables -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap4.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
 
     <script>
@@ -83,7 +94,26 @@
 
             // Evento para el botón "Agregar Usuario"
             $("#btnAgregar").click(function () {
-                alert("Aquí abrirías un modal o redirigirías a un formulario para agregar un usuario.");
+                // Cargar el contenido del modal desde la vista parcial
+                $("#modalContent").load("@Url.Action("AgregarUsuario", "Home")", function () {
+                    $("#modalAgregarUsuario").modal("show");
+                });
+            });
+
+            // Evento para guardar el nuevo usuario
+            $(document).on("click", "#btnGuardarUsuario", function () {
+                // Aquí puedes agregar la lógica para guardar el usuario
+                // Por ejemplo, puedes enviar un formulario mediante AJAX
+                var formData = $("#formAgregarUsuario").serialize();
+                $.post("@Url.Action("AgregarUsuario", "Home")", formData, function (response) {
+                    if (response.success) {
+                        alert("Usuario agregado con éxito");
+                        $("#modalAgregarUsuario").modal("hide");
+                        tabladta.ajax.reload(); // Recargar la tabla de usuarios
+                    } else {
+                        alert("Error agregando usuario: " + response.message);
+                    }
+                });
             });
 
             // Evento para botón "Editar"
@@ -98,6 +128,7 @@
                 var id = $(this).data("id");
                 if (confirm("¿Seguro que quieres eliminar este usuario?")) {
                     console.log("Eliminando usuario con ID: " + id);
+
                     // Aquí puedes hacer una petición AJAX para eliminar el usuario en el servidor
                 }
             });

@@ -487,6 +487,9 @@
     <Content Include="Views\Mantenedor\Categoria.cshtml" />
     <Content Include="Views\Mantenedor\Marca.cshtml" />
     <Content Include="Views\Mantenedor\Producto.cshtml" />
+    <Content Include="Views\Home\EditarUsuario.cshtml" />
+    <Content Include="Views\Home\EliminarUsuario.cshtml" />
+    <Content Include="Views\Home\AgregarUsuario.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

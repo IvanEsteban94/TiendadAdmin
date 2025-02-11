@@ -1,13 +1,17 @@
-﻿
-@{
+﻿@{
     ViewBag.Title = "Producto";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <h2>Producto</h2>
 
+<ol class="breadcrumb mb-4 mt-4">
+    <li class="breadcrumb-item"><a href="index.html">Mantenimiento</a></li>
+    <li class="breadcrumb-item active">Producto</li>
+</ol>
+
 <!-- Botón para agregar un nuevo producto -->
 <div class="mb-3">
-    <button class="btn btn-success" onclick="agregarProducto()">
+    <button class="btn btn-success" onclick="abrirModal(null)">
         <i class="fas fa-plus"></i> Agregar Producto
     </button>
 </div>
@@ -18,7 +22,7 @@
     </div>
     <div class="card-body">
         <div class="table-responsive">
-            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+            <table id="tablaProductos" class="table table-bordered" width="100%" cellspacing="0">
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -43,7 +47,7 @@
                         <td>$100.00</td>
                         <td>50</td>
                         <td><img src="ruta/a/imagen.jpg" alt="Imagen del Producto" width="50"></td>
-                        <td>✔️</td>
+                        <td><span class="badge bg-success">✔️</span></td>
                         <td class="d-flex gap-2">
                             <button class="btn btn-warning btn-sm" onclick="editarProducto(1)">
                                 <i class="fas fa-edit"></i> Editar
@@ -59,22 +63,43 @@
     </div>
 </div>
 
-<!-- Agregar FontAwesome para los íconos -->
-<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+<!-- Modal para agregar/editar productos -->
+<div class="modal fade" id="FormModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-dark text-white">
+                <h5 class="modal-title" id="exampleModalLabel">Producto</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <input id="txtid" type="hidden" value="0" />
+                <div class="row g-2">
+                    <div class="col-sm-6">
+                        <label for="txtdescripcion" class="form-label">Descripción</label>
+                        <input type="text" class="form-control" id="txtdescripcion" autocomplete="off" />
+                    </div>
+                    <div class="col-sm-6">
+                        <label for="cboactivo" class="form-label">Activo</label>
+                        <select id="cboactivo" class="form-select">
+                            <option value="1">Sí</option>
+                            <option value="0">No</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-12">
+                        <div id="mensajeError" class="alert alert-danger d-none" role="alert">
+                            ¡Por favor completa todos los campos!
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-primary" onclick="guardarProducto()">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-<script>
-    function agregarProducto() {
-        alert('Abrir formulario para agregar un nuevo producto.');
-    }
 
-    function editarProducto(id) {
-        alert('Editar producto con ID: ' + id);
-
-    }
-
-    function eliminarProducto(id) {
-        if (confirm('¿Seguro que deseas eliminar el producto con ID: ' + id + '?')) {
-            alert('Producto eliminado.');
-        }
-    }
-</script>

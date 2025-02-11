@@ -1,20 +1,14 @@
-﻿
-@{
+﻿@{
     ViewBag.Title = "Categoria";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Categoria</h2>
-<!-- Botón para agregar un nueva Categorias -->
-<div class="mb-3">
-    <button class="btn btn-success" onclick="agregarProducto()">
-        <i class="fas fa-plus"></i> Agregar Categorias
-    </button>
-</div>
+<h2>Categorías</h2>
 
 <div class="card shadow mb-4">
-    <div class="card-header py-3">
-        <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
+    <div class="card-header py-3 d-flex justify-content-between">
+        <h6 class="m-0 font-weight-bold text-primary">Categorías Registradas</h6>
+        <button class="btn btn-success btn-sm" id="btnAgregar">Agregar Categoría</button>
     </div>
     <div class="card-body">
         <div class="table-responsive">
@@ -26,37 +20,156 @@
                         <th>Acciones</th>
                     </tr>
                 </thead>
-
-                <tbody>
-                    <tr>
-                        <td>Tiger Nixon</td>
-                        <td>✔️</td>
-                        <td class="d-flex gap-2">
-                            <button class="btn btn-warning btn-sm" onclick="editarProducto(1)">
-                                <i class="fas fa-edit"></i> Editar
-                            </button>
-                            <button class="btn btn-danger btn-sm" onclick="eliminarProducto(1)">
-                                <i class="fas fa-trash"></i> Eliminar
-                            </button>
-                        </td>
-                    </tr>
-                </tbody>
+                <tbody></tbody>
             </table>
         </div>
     </div>
 </div>
 
-<!-- Agregar FontAwesome para los íconos -->
-<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+<!-- Modal para agregar y editar categoría -->
+<div class="modal fade" id="modalCategoria" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Categoría</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="idCategoria">
+                <div class="form-group">
+                    <label>Descripción</label>
+                    <input type="text" class="form-control" id="descripcion">
+                </div>
+                <div class="form-group">
+                    <label>Activo</label>
+                    <select class="form-control" id="activo">
+                        <option value="true">Sí</option>
+                        <option value="false">No</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" id="btnGuardar">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
 
-<script>
-    function editarProducto(id) {
-        alert('Editar producto con ID: ' + id);
-    }
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-loading-overlay/2.1.7/loadingoverlay.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
 
-    function eliminarProducto(id) {
-        if (confirm('¿Seguro que deseas eliminar el producto con ID: ' + id + '?')) {
-            alert('Producto eliminado.');
-        }
-    }
-</script>
+    <script>
+        $(document).ready(function () {
+            var tabla = $('#dataTable').DataTable({
+                ajax: {
+                    url: '@Url.Action("ListaCategoria", "Mantenedor")',
+                    type: "GET",
+                    dataType: "json"
+                },
+                columns: [
+                    { data: "Descripcion" },
+                    {
+                        data: "Activo",
+                        render: function (data) {
+                            return data ? "<span class='badge badge-success'>Sí</span>" : "<span class='badge badge-danger'>No</span>";
+                        }
+                    },
+                    {
+                        data: null,
+                        render: function (data) {
+                            return `
+                                <button class="btn btn-primary btn-sm btnEditar" data-id="${data.IdCategoria}">Editar</button>
+                                <button class="btn btn-danger btn-sm btnEliminar" data-id="${data.IdCategoria}">Eliminar</button>
+                            `;
+                        }
+                    }
+                ]
+            });
+
+            // Evento para abrir el modal de agregar
+            $("#btnAgregar").click(function () {
+                $("#idCategoria").val("");
+                $("#descripcion").val("");
+                $("#activo").val("true");
+                $("#modalCategoria").modal("show");
+            });
+
+            // Guardar (Agregar o Editar)
+            $("#btnGuardar").click(function () {
+                var id = $("#idCategoria").val();
+                var data = {
+                    IdCategoria: id ? parseInt(id) : 0,
+                    Descripcion: $("#descripcion").val(),
+                    Activo: $("#activo").val() === "true"
+                };
+
+                $.ajax({
+                    url: id ? '@Url.Action("Editar", "Mantenedor")' : '@Url.Action("AgregarCategoria", "Mantenedor")',
+                    type: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify(data),
+                    success: function (response) {
+                        if (response.success) {
+                            Swal.fire("Éxito", response.message, "success");
+                            tabla.ajax.reload();
+                            $("#modalCategoria").modal("hide");
+                        } else {
+                            Swal.fire("Error", response.message, "error");
+                        }
+                    }
+                });
+            });
+
+            // Editar categoría
+            $("#dataTable tbody").on("click", ".btnEditar", function () {
+                var id = $(this).data("id");
+                $.get('@Url.Action("ObtenerCategoria", "Mantenedor")', { id: id }, function (data) {
+                    if (data) {
+                        $("#idCategoria").val(data.IdCategoria);
+                        $("#descripcion").val(data.Descripcion);
+                        $("#activo").val(data.Activo.toString());
+                        $("#modalCategoria").modal("show");
+                    }
+                });
+            });
+
+            // Eliminar categoría
+            $("#dataTable tbody").on("click", ".btnEliminar", function () {
+                var id = $(this).data("id");
+                Swal.fire({
+                    title: "¿Estás seguro?",
+                    text: "No podrás revertir esto.",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: "Sí, eliminar",
+                    cancelButtonText: "Cancelar"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: '@Url.Action("Eliminar", "Mantenedor")',
+                            type: "POST",
+                            data: { id: id },
+                            success: function (response) {
+                                if (response.success) {
+                                    Swal.fire("Eliminado", response.message, "success");
+                                    tabla.ajax.reload();
+                                } else {
+                                    Swal.fire("Error", response.message, "error");
+                                }
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+}

@@ -5,22 +5,25 @@ using System.Text;
 using System.Threading.Tasks;
 using CapaEntidy;
 using CapaDato;
+
 namespace CapaNegocio
 {
     public class CNUsuario
     {
         private CD_Usuario objcapaDato = new CD_Usuario();
+
         public List<Usuario> Listar()
         {
             // Aquí deberías conectar a la base de datos y devolver los usuarios
             return objcapaDato.Listar(); // Simulación de datos
         }
+
         // Registrar un nuevo usuario
         public bool Registrar(Usuario usuario)
         {
             if (usuario == null || string.IsNullOrWhiteSpace(usuario.Nombre) || string.IsNullOrWhiteSpace(usuario.Correo))
             {
-                return false; 
+                return false;
             }
 
             try
@@ -39,7 +42,7 @@ namespace CapaNegocio
         {
             if (usuario == null || usuario.IdUsuario <= 0 || string.IsNullOrWhiteSpace(usuario.Nombre) || string.IsNullOrWhiteSpace(usuario.Correo))
             {
-                return false; 
+                return false;
             }
 
             try
@@ -58,7 +61,7 @@ namespace CapaNegocio
         {
             if (id <= 0)
             {
-                return false; 
+                return false;
             }
 
             try
@@ -71,6 +74,24 @@ namespace CapaNegocio
                 return false;
             }
         }
-    }
 
+        // Obtener un usuario por ID
+        public Usuario Obtener(int id)
+        {
+            if (id <= 0)
+            {
+                return null;
+            }
+
+            try
+            {
+                return objcapaDato.Obtener(id);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al obtener usuario: {ex.Message}");
+                return null;
+            }
+        }
+    }
 }

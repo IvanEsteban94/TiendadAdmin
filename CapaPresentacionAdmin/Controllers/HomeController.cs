@@ -10,35 +10,30 @@ namespace CapaPresentacionAdmin.Controllers
 {
     public class HomeController : Controller
     {
-
         public ActionResult Index()
         {
             return View();
         }
 
-       
-       
-       
         public ActionResult Usuario()
         {
-
             return View();
         }
+
         [HttpGet]
         public JsonResult ListaUsuario()
         {
             List<Usuario> oLista = new List<Usuario>();
             oLista = new CNUsuario().Listar();
-            return Json(new { data=oLista} ,JsonRequestBehavior.AllowGet);
+            return Json(new { data = oLista }, JsonRequestBehavior.AllowGet);
         }
-        
 
         [HttpGet]
-        // Acción que devuelve la vista parcial del modal para agregar usuario
         public ActionResult AgregarUsuario()
         {
             return PartialView();
         }
+
         [HttpPost]
         public JsonResult AgregarUsuario(Usuario usuario)
         {
@@ -54,6 +49,17 @@ namespace CapaPresentacionAdmin.Controllers
                 success = respuesta,
                 message = respuesta ? "Usuario agregado correctamente." : "Error al agregar usuario."
             });
+        }
+
+        [HttpGet]
+        public ActionResult EditarUsuario(int id)
+        {
+            Usuario usuario = new CNUsuario().Obtener(id);
+            if (usuario == null)
+            {
+                return HttpNotFound();
+            }
+            return PartialView(usuario);
         }
 
         [HttpPost]
@@ -89,8 +95,5 @@ namespace CapaPresentacionAdmin.Controllers
                 message = respuesta ? "Usuario eliminado correctamente." : "Error al eliminar usuario."
             });
         }
-
-
     }
-
 }

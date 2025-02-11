@@ -19,8 +19,6 @@
                         <th>Nombre</th>
                         <th>Apellido</th>
                         <th>Correo</th>
-                        <th>Clave</th>
-                        <th>Reestablecer</th>
                         <th>Activo</th>
                         <th>Acciones</th>
                     </tr>
@@ -41,22 +39,21 @@
 </div>
 
 @section Scripts {
-    <!-- Incluir jQuery y DataTables -->
+    <!-- Incluir jQuery, DataTables, LoadingOverlay, Bootstrap y SweetAlert -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap4.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-loading-overlay/2.1.7/loadingoverlay.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
 
     <script>
         $(document).ready(function () {
             console.log("Inicializando DataTable...");
 
-            // Verifica si DataTables está cargado correctamente
-            if (typeof $.fn.DataTable === "undefined") {
-                console.error("DataTables no está definido. Verifica los scripts.");
-                return;
-            }
+            // Mostrar LoadingOverlay al cargar la página
+            $.LoadingOverlay("show");
 
             // Inicializar DataTable
             var tabladta = $('#dataTable').DataTable({
@@ -68,14 +65,16 @@
                     "dataType": "json",
                     "error": function (xhr, status, error) {
                         console.error("Error cargando DataTable:", xhr.responseText);
+                    },
+                    "complete": function () {
+                        // Ocultar LoadingOverlay cuando se complete la carga de datos
+                        $.LoadingOverlay("hide");
                     }
                 },
                 "columns": [
                     { "data": "Nombre" },
                     { "data": "Apellido" },
                     { "data": "Correo" },
-                    { "data": "Clave" },
-                    { "data": "Reestablecer" },
                     {
                         "data": "Activo",
                         "render": function (valor) {
@@ -94,24 +93,66 @@
 
             // Evento para el botón "Agregar Usuario"
             $("#btnAgregar").click(function () {
-                // Cargar el contenido del modal desde la vista parcial
+                $.LoadingOverlay("show");
                 $("#modalContent").load("@Url.Action("AgregarUsuario", "Home")", function () {
+                    $.LoadingOverlay("hide");
                     $("#modalAgregarUsuario").modal("show");
                 });
             });
 
             // Evento para guardar el nuevo usuario
             $(document).on("click", "#btnGuardarUsuario", function () {
-                // Aquí puedes agregar la lógica para guardar el usuario
-                // Por ejemplo, puedes enviar un formulario mediante AJAX
+                $.LoadingOverlay("show");
                 var formData = $("#formAgregarUsuario").serialize();
                 $.post("@Url.Action("AgregarUsuario", "Home")", formData, function (response) {
+                    $.LoadingOverlay("hide");
                     if (response.success) {
-                        alert("Usuario agregado con éxito");
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Éxito',
+                            text: 'Usuario agregado con éxito'
+                        });
                         $("#modalAgregarUsuario").modal("hide");
-                        tabladta.ajax.reload(); // Recargar la tabla de usuarios
+                        tabladta.ajax.reload();
                     } else {
-                        alert("Error agregando usuario: " + response.message);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Error agregando usuario: ' + response.message
+                        });
+                    }
+                });
+            });
+
+            // Evento para botón "Eliminar"
+            $("#dataTable tbody").on("click", ".btn-eliminar", function () {
+                var id = $(this).data("id");
+                Swal.fire({
+                    title: '¿Seguro que quieres eliminar este usuario?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sí, eliminar',
+                    cancelButtonText: 'No, cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.LoadingOverlay("show");
+                        $.post("@Url.Action("EliminarUsuario", "Home")", { id: id }, function (response) {
+                            $.LoadingOverlay("hide");
+                            if (response.success) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Eliminado',
+                                    text: 'Usuario eliminado con éxito'
+                                });
+                                tabladta.ajax.reload();
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: 'Error eliminando usuario: ' + response.message
+                                });
+                            }
+                        });
                     }
                 });
             });
@@ -119,18 +160,35 @@
             // Evento para botón "Editar"
             $("#dataTable tbody").on("click", ".btn-editar", function () {
                 var id = $(this).data("id");
-                alert("Editar usuario con ID: " + id);
-                // Aquí puedes redirigir a una página de edición o abrir un modal con el formulario de edición
+                $.LoadingOverlay("show");
+                $("#modalContent").load("@Url.Action("EditarUsuario", "Home")", { id: id }, function () {
+                    $.LoadingOverlay("hide");
+                    $("#modalAgregarUsuario").modal("show");
+                });
             });
 
-            // Evento para botón "Eliminar"
-            $("#dataTable tbody").on("click", ".btn-eliminar", function () {
-                var id = $(this).data("id");
-                if (confirm("¿Seguro que quieres eliminar este usuario?")) {
-                    console.log("Eliminando usuario con ID: " + id);
-
-                    // Aquí puedes hacer una petición AJAX para eliminar el usuario en el servidor
-                }
+            // Evento para guardar cambios del usuario editado
+            $(document).on("click", "#btnGuardarCambiosUsuario", function () {
+                $.LoadingOverlay("show");
+                var formData = $("#formEditarUsuario").serialize();
+                $.post("@Url.Action("EditarUsuario", "Home")", formData, function (response) {
+                    $.LoadingOverlay("hide");
+                    if (response.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Éxito',
+                            text: 'Usuario editado con éxito'
+                        });
+                        $("#modalAgregarUsuario").modal("hide");
+                        tabladta.ajax.reload();
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Error editando usuario: ' + response.message
+                        });
+                    }
+                });
             });
         });
     </script>

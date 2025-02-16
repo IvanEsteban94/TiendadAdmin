@@ -30,7 +30,7 @@ namespace CapaDato
                             {
                                 IdMarca = Convert.ToInt32(dr["IdMarca"]),
                                 Descripcion = dr["Descripcion"].ToString(),
-                                Activo = Convert.ToBoolean(dr["Active"])
+                                Active = Convert.ToBoolean(dr["Active"])
                             });
                         }
                     }
@@ -60,7 +60,7 @@ namespace CapaDato
                     cmd.CommandType = CommandType.StoredProcedure;
 
                     cmd.Parameters.AddWithValue("@Descripcion", Marca.Descripcion);
-                    cmd.Parameters.AddWithValue("@Activo", Marca.Activo);
+                    cmd.Parameters.AddWithValue("@Activo", Marca.Active);
                     cmd.Parameters.Add("@Resultado", SqlDbType.Int).Direction = ParameterDirection.Output;
                     cmd.Parameters.Add("@Mensaje", SqlDbType.VarChar, 500).Direction = ParameterDirection.Output;
 
@@ -97,7 +97,7 @@ namespace CapaDato
 
                     cmd.Parameters.AddWithValue("@IdMarca", Marca.IdMarca);
                     cmd.Parameters.AddWithValue("@Descripcion", Marca.Descripcion);
-                    cmd.Parameters.AddWithValue("@Activo", Marca.Activo);
+                    cmd.Parameters.AddWithValue("@Activo", Marca.Active);
                     cmd.Parameters.Add("@Resultado", SqlDbType.Int).Direction = ParameterDirection.Output;
                     cmd.Parameters.Add("@Mensaje", SqlDbType.VarChar, 500).Direction = ParameterDirection.Output;
 
@@ -128,7 +128,7 @@ namespace CapaDato
             {
                 using (SqlConnection cn = new SqlConnection(conexion.Cn))
                 {
-                    string sql = "sp_EliminarCategoria";
+                    string sql = "sp_EliminarMarca";
                     SqlCommand cmd = new SqlCommand(sql, cn);
                     cmd.CommandType = CommandType.StoredProcedure;
 
@@ -174,7 +174,7 @@ namespace CapaDato
                             {
                                 IdMarca = Convert.ToInt32(dr["IdMarca"]),
                                 Descripcion = dr["Descripcion"].ToString(),
-                                Activo = Convert.ToBoolean(dr["Active"])
+                                Active = Convert.ToBoolean(dr["Active"])
                             };
                         }
                     }

@@ -1,0 +1,130 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout_Tienda.cshtml";
+}<div class="row mt-5">
+    <div class="bg-secondary py-3">
+        <div class="container my-3">
+            <div class="text-center text-white">
+                <h1 class="display-4 fw-bolder">Tienda</h1>
+                <p class="lead fw-normal text-white-50 mb-0">With this shop homepage template</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="py-2">
+        <div class="container px-2 px-lg-2 mt-5">
+            <div id="catalogo-productos" class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+                <!-- Aquí se inyectarán las tarjetas de productos -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal (si se requiere para seleccionar categoría) -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Seleccione una Categoría</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row row-categoria">
+                    <!-- Aquí puedes cargar botones o contenido relacionado a las categorías -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <!-- Opciones adicionales en el modal -->
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <!-- Incluir jQuery, LoadingOverlay, Bootstrap y SweetAlert -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-loading-overlay/2.1.7/loadingoverlay.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+    var carrito = JSON.parse(localStorage.getItem("carrito")) || []; // Recupera el carrito o lo inicializa
+
+    $(document).ready(function () {
+        listarProductos();
+    });
+
+    function listarProductos() {
+        $.ajax({
+            url: '@Url.Action("ListaProducto", "Home")',
+            type: "GET",
+            dataType: "json",
+            beforeSend: function () {
+                $("#catalogo-productos").LoadingOverlay("show");
+            },
+            success: function (data) {
+                $("#catalogo-productos").LoadingOverlay("hide");
+                $("#catalogo-productos").html("");
+
+                if (data.data) {
+                    $.each(data.data, function (i, item) {
+                        var card = `
+                            <div class="col mb-5">
+                                <div class="card h-100">
+                                    <img class="card-img-top" src="data:image/${item.extension};base64,${item.base64}" alt="${item.Nombre}" />
+                                    <div class="card-body p-4">
+                                        <div class="text-center">
+                                            <h5 class="fw-bolder">${item.Nombre}</h5>
+                                            S/. ${item.Precio}
+                                        </div>
+                                    </div>
+                                    <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                                        <div class="d-grid d-md-block gap-2 align-items-center text-center">
+                                            <button class="btn btn-outline-dark mt-auto btn-agregar" data-elemento='${JSON.stringify(item)}'>
+                                                🛒 Agregar al carrito
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>`;
+                        $("#catalogo-productos").append(card);
+                    });
+                }
+            },
+            error: function (error) {
+                console.log(error);
+                $("#catalogo-productos").LoadingOverlay("hide");
+            }
+        });
+    }
+
+    // Agregar producto al carrito
+    $(document).on("click", ".btn-agregar", function () {
+        var producto = JSON.parse($(this).attr("data-elemento"));
+
+        // Evitar duplicados
+        var existe = carrito.find(p => p.IdProducto === producto.IdProducto);
+        if (!existe) {
+            carrito.push(producto);
+            localStorage.setItem("carrito", JSON.stringify(carrito));
+
+            Swal.fire({
+                icon: 'success',
+                title: 'Producto Agregado',
+                text: producto.Nombre + " ha sido agregado al carrito.",
+                timer: 1500,
+                showConfirmButton: false
+            });
+        } else {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Ya está en el carrito',
+                text: producto.Nombre + " ya fue agregado.",
+                timer: 1500,
+                showConfirmButton: false
+            });
+        }
+    });
+    </script>
+
+}

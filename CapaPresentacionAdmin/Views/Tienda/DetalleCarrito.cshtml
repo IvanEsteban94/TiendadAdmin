@@ -1,0 +1,107 @@
+﻿@{
+    ViewBag.Title = "DetalleCarrito";
+    Layout = "~/Views/Shared/_Layout_Tienda.cshtml";
+}
+
+<h2 class="text-center mt-4">🛒 Carrito de Compras</h2>
+
+<div class="container mt-4">
+    <table class="table table-bordered" id="tabla-carrito">
+        <thead>
+            <tr>
+                <th>Imagen</th>
+                <th>Producto</th>
+                <th>Precio</th>
+                <th>Cantidad</th>
+                <th>Subtotal</th>
+                <th>Acción</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- El contenido se cargará mediante JavaScript -->
+        </tbody>
+    </table>
+
+    <!-- Contenedor para mostrar el total -->
+    <div class="text-end mb-3">
+        <h4>Total: <span id="total-carrito">S/. 0</span></h4>
+    </div>
+
+    <div class="text-right">
+        <a href="@Url.Action("Index", "Home")" class="btn btn-primary">🔍 Seguir Comprando</a>
+        <button id="btnVaciar" class="btn btn-danger">🗑 Vaciar Carrito</button>
+        <a href="@Url.Action("Checkout", "Carrito")" class="btn btn-success">💳 Proceder al Pago</a>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        // Al cargar la vista, se actualiza el contenido del carrito
+        $(document).ready(function () {
+            actualizarCarrito();
+        });
+
+        // Función para actualizar y mostrar el carrito en la tabla
+        function actualizarCarrito() {
+            // Recupera el carrito desde el localStorage o inicializa un arreglo vacío
+            var carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+            var tabla = $("#tabla-carrito tbody");
+            tabla.empty();
+
+            var total = 0;
+
+            if (carrito.length === 0) {
+                tabla.append("<tr><td colspan='6' class='text-center'>El carrito está vacío</td></tr>");
+            } else {
+                $.each(carrito, function (index, item) {
+                    var subtotal = item.Precio * item.Cantidad;
+                    total += subtotal;
+
+                    var fila = `
+                            <tr>
+                                <td><img src="data:image/${item.extension};base64,${item.base64}" width="50" /></td>
+                                <td>${item.Nombre}</td>
+                                <td>S/. ${item.Precio}</td>
+                                <td>
+                                    <input type="number" class="form-control cantidad-carrito" data-index="${index}" value="${item.Cantidad}" min="1" />
+                                </td>
+                                <td>S/. ${subtotal.toFixed(2)}</td>
+                                <td>
+                                    <button class="btn btn-danger btn-eliminar" data-index="${index}">❌ Eliminar</button>
+                                </td>
+                            </tr>`;
+                    tabla.append(fila);
+                });
+            }
+            // Actualiza el total en la vista
+            $("#total-carrito").text("S/. " + total.toFixed(2));
+        }
+
+        // Evento para eliminar un producto del carrito
+        $(document).on("click", ".btn-eliminar", function () {
+            var index = $(this).data("index");
+            var carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+            carrito.splice(index, 1);
+            localStorage.setItem("carrito", JSON.stringify(carrito));
+            actualizarCarrito();
+        });
+
+        // Evento para vaciar el carrito completamente
+        $("#btnVaciar").click(function () {
+            localStorage.removeItem("carrito");
+            actualizarCarrito();
+        });
+
+        // Evento para actualizar la cantidad de un producto en el carrito
+        $(document).on("change", ".cantidad-carrito", function () {
+            var index = $(this).data("index");
+            var nuevaCantidad = parseInt($(this).val());
+            var carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+            if (carrito[index]) {
+                carrito[index].Cantidad = nuevaCantidad;
+                localStorage.setItem("carrito", JSON.stringify(carrito));
+                actualizarCarrito();
+            }
+        });
+    </script>
+}

@@ -172,5 +172,59 @@ namespace CapaDato
 
             return usuario;
         }
+        public bool CambiarClave(int idUsuario, string nuevaclave, out string Mensaje)
+        {
+            bool resultado = false;
+            Mensaje = string.Empty;
+
+            try
+            {
+                using (SqlConnection cn = new SqlConnection(conexion.Cn))
+                {
+                    string sql = "UPDATE usuario SET clave = @nuevaclave, reestablecer = 0 WHERE idusuario = @IdUsuario";
+                    SqlCommand cmd = new SqlCommand(sql, cn);
+                    cmd.Parameters.AddWithValue("@IdUsuario", idUsuario);
+                    cmd.Parameters.AddWithValue("@nuevaclave", nuevaclave);
+                    cmd.CommandType = CommandType.Text;
+                    cn.Open();
+                    resultado = cmd.ExecuteNonQuery() > 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                resultado = false;
+                Mensaje = ex.Message;
+            }
+
+            return resultado;
+        }
+        public bool ReestableceClave(int idUsuario, string clave, out string Mensaje)
+        {
+            bool resultado = false;
+            Mensaje = string.Empty;
+
+            try
+            {
+                using (SqlConnection cn = new SqlConnection(conexion.Cn))
+                {
+                    string sql = "UPDATE usuario SET clave = @clave, reestablecer = 1 WHERE idusuario = @IdUsuario";
+                    SqlCommand cmd = new SqlCommand(sql, cn);
+                    cmd.Parameters.AddWithValue("@IdUsuario", idUsuario);
+                    cmd.Parameters.AddWithValue("@clave", clave);
+                    cmd.CommandType = CommandType.Text;
+                    cn.Open();
+                    resultado = cmd.ExecuteNonQuery() > 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                resultado = false;
+                Mensaje = ex.Message;
+            }
+
+            return resultado;
+        }
+
+
     }
 }

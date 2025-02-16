@@ -31,11 +31,12 @@ namespace CapaNegocio
             // Si no hay mensaje de error, proceder con la inserción
             if (string.IsNullOrEmpty(Mensaje))
             {
-                return objcapaDato.Agregar(Marca, out Mensaje);
+                return false;
             }
             else
             {
-                return false; // Retornar false en caso de error
+                return objcapaDato.Agregar(Marca, out Mensaje);
+
             }
         }
 

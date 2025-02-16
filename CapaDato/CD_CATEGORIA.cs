@@ -30,7 +30,7 @@ namespace CapaDato
                             {
                                 IdCategoria = Convert.ToInt32(dr["IdCategoria"]),
                                 Descripcion = dr["Descripcion"].ToString(),
-                                Activo = Convert.ToBoolean(dr["Active"])
+                                Active = Convert.ToBoolean(dr["Active"])
                             });
                         }
                     }
@@ -60,7 +60,7 @@ namespace CapaDato
                     cmd.CommandType = CommandType.StoredProcedure;
 
                     cmd.Parameters.AddWithValue("@Descripcion", categoria.Descripcion);
-                    cmd.Parameters.AddWithValue("@Activo", categoria.Activo);
+                    cmd.Parameters.AddWithValue("@Activo", categoria.Active);
                     cmd.Parameters.Add("@Resultado", SqlDbType.Int).Direction = ParameterDirection.Output;
                     cmd.Parameters.Add("@Mensaje", SqlDbType.VarChar, 500).Direction = ParameterDirection.Output;
 
@@ -97,7 +97,7 @@ namespace CapaDato
 
                     cmd.Parameters.AddWithValue("@IdCategoria", categoria.IdCategoria);
                     cmd.Parameters.AddWithValue("@Descripcion", categoria.Descripcion);
-                    cmd.Parameters.AddWithValue("@Activo", categoria.Activo);
+                    cmd.Parameters.AddWithValue("@Activo", categoria.Active);
                     cmd.Parameters.Add("@Resultado", SqlDbType.Int).Direction = ParameterDirection.Output;
                     cmd.Parameters.Add("@Mensaje", SqlDbType.VarChar, 500).Direction = ParameterDirection.Output;
 
@@ -174,7 +174,7 @@ namespace CapaDato
                             {
                                 IdCategoria = Convert.ToInt32(dr["IdCategoria"]),
                                 Descripcion = dr["Descripcion"].ToString(),
-                                Activo = Convert.ToBoolean(dr["Active"])
+                                Active = Convert.ToBoolean(dr["Active"])
                             };
                         }
                     }

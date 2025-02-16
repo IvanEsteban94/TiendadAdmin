@@ -41,9 +41,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CNCarrito.cs" />
     <Compile Include="CNCategoria.cs" />
     <Compile Include="CNMARCA.cs" />
     <Compile Include="CNProducto.cs" />
+    <Compile Include="CNRecurso.cs" />
     <Compile Include="CNUsuario.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

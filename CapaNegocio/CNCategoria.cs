@@ -14,64 +14,43 @@ namespace CapaNegocio
 
         public List<Categoria> Listar()
         {
-            // Aquí deberías conectar a la base de datos y devolver los usuarios
-            return objcapaDato.Listar(); // Simulación de datos
+            return objcapaDato.Listar();
         }
 
-        public bool Registrar(Categoria Categoria, out string Mensaje)
+        public bool Registrar(Categoria categoria, out string mensaje)
         {
-            Mensaje = ""; // Inicializar la variable Mensaje
+            mensaje = "";
 
-            // Verificar si la descripción de la categoría está vacía o nula
-            if (string.IsNullOrEmpty(Categoria.Descripcion) || string.IsNullOrWhiteSpace(Categoria.Descripcion))
+            if (string.IsNullOrEmpty(categoria.Descripcion) || string.IsNullOrWhiteSpace(categoria.Descripcion))
             {
-                Mensaje = "La descripcion de la categoria no puede ser vacio";
+                mensaje = "La descripción de la categoría no puede estar vacía.";
+                return false;
             }
 
-            // Si no hay mensaje de error, proceder con la inserción
-            if (string.IsNullOrEmpty(Mensaje))
-            {
-                return objcapaDato.Agregar(Categoria, out Mensaje);
-            }
-            else
-            {
-                return false; // Retornar false en caso de error
-            }
+            return objcapaDato.Agregar(categoria, out mensaje);
         }
 
-        // Editar un usuario existente
-        public bool Editar(Categoria Categoria, out string Mensaje)
+        public bool Editar(Categoria categoria, out string mensaje)
         {
-            Mensaje = ""; // Inicializar la variable Mensaje
+            mensaje = "";
 
-            // Verificar si la descripción de la categoría está vacía o nula
-            if (string.IsNullOrEmpty(Categoria.Descripcion) || string.IsNullOrWhiteSpace(Categoria.Descripcion))
+            if (string.IsNullOrEmpty(categoria.Descripcion) || string.IsNullOrWhiteSpace(categoria.Descripcion))
             {
-                Mensaje = "La descripcion de la categoria no puede ser vacio";
+                mensaje = "La descripción de la categoría no puede estar vacía.";
+                return false;
             }
-            // Si no hay mensaje de error, proceder con la inserción
-            if (string.IsNullOrEmpty(Mensaje))
-            {
-                return objcapaDato.Editar(Categoria, out Mensaje);
-            }
-            else
-            {
-                return false; // Retornar false en caso de error
-            }
+
+            return objcapaDato.Editar(categoria, out mensaje);
         }
 
-        // Eliminar un usuario por ID
-        public bool Eliminar(int id, out string Mensaje)
+        public bool Eliminar(int id, out string mensaje)
         {
-
-            return objcapaDato.Eliminar(id, out Mensaje);
+            return objcapaDato.Eliminar(id, out mensaje);
         }
+
         public Categoria ObtenerPorId(int id)
         {
-            // Return the category that matches the provided ID
             return objcapaDato.ObtenerPorId(id);
         }
-
-
     }
 }

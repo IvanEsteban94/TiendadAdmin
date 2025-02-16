@@ -1,0 +1,50 @@
+﻿@{
+    ViewBag.Title = "Carrito de Compras";
+    Layout = "~/Views/Shared/_Layout_Tienda.cshtml";
+}
+
+<h2 class="text-center mt-4">🛒 Carrito de Compras</h2>
+
+@if (Model != null && Model.Count > 0)
+{
+    <table class="table table-striped mt-3">
+        <thead class="thead-dark">
+            <tr>
+                <th>Imagen</th>
+                <th>Nombre</th>
+                <th>Precio</th>
+                <th>Acción</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        <img src="@item.RutaImagen" alt="@item.Nombre" style="width: 80px; border-radius: 5px;" />
+                    </td>
+                    <td>@item.Nombre</td>
+                    <td>@item.Precio.ToString("C")</td>
+                    <td>
+                        <a href="@Url.Action("Eliminar", "Carrito", new { id = item.IdProducto })" class="btn btn-danger btn-sm">
+                            ❌ Eliminar
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="text-right">
+        <a href="@Url.Action("Index", "Tienda")" class="btn btn-primary">🔙 Seguir Comprando</a>
+        <a href="@Url.Action("Checkout", "Carrito")" class="btn btn-success">💳 Proceder al Pago</a>
+    </div>
+}
+else
+{
+    <div class="alert alert-warning text-center mt-4">
+        <h4>🚨 Tu carrito está vacío 🚨</h4>
+        <p>¡Agrega productos para comenzar tu compra!</p>
+        <a href="@Url.Action("Index", "Producto")" class="btn btn-primary">🔍 Explorar Productos</a>
+    </div>
+}

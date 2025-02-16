@@ -1,5 +1,4 @@
-﻿@using System.Web.Mvc
-@{
+﻿@{
     ViewBag.Title = "Usuario";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -9,7 +8,7 @@
 <div class="card shadow mb-4">
     <div class="card-header py-3 d-flex justify-content-between">
         <h6 class="m-0 font-weight-bold text-primary">Usuarios Registrados</h6>
-        <button class="btn btn-success btn-sm" id="btnAgregar">Agregar Usuario</button>
+        <button class="btn btn-success btn-sm" id="btnAgregar" onclick="abrirModal(null)">Agregar Usuario</button>
     </div>
     <div class="card-body">
         <div class="table-responsive">
@@ -29,17 +28,143 @@
     </div>
 </div>
 
-<!-- Modal contenedor -->
-<div class="modal fade" id="modalAgregarUsuario" tabindex="-1" role="dialog" aria-labelledby="modalAgregarUsuarioLabel" aria-hidden="true">
+<!-- User Information Modal -->
+<div class="modal fade" id="UserFormModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="UserFormModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
-        <div class="modal-content" id="modalContent">
-            <!-- El contenido del modal se cargará aquí -->
+        <div class="modal-content">
+            <div class="modal-header bg-dark text-white">
+                <h5 class="modal-title" id="UserFormModalLabel">Usuario</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input id="userid" type="hidden" value="0" />
+                <form id="userForm">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label for="txtNombre">Nombre</label>
+                                <input type="text" class="form-control required" id="txtNombre" name="nombre" autocomplete="off">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label for="txtApellido">Apellido</label>
+                                <input type="text" class="form-control required" id="txtApellido" name="apellido" autocomplete="off">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label for="txtCorreo">Correo</label>
+                                <input type="email" class="form-control required" id="txtCorreo" name="correo" autocomplete="off">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label for="txtClave">Clave</label>
+                                <input type="password" class="form-control required" id="txtClave" name="clave" autocomplete="off">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label for="cboEstado">Estado</label>
+                                <select id="cboEstado" class="form-select">
+                                    <option value="1">Activo</option>
+                                    <option value="0">No Activo</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" onclick="Guardar()">Guardar</button>
+            </div>
         </div>
     </div>
 </div>
 
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="UserFormModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="UserFormModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-dark text-white">
+                <h5 class="modal-title" id="UserFormModalLabel">Usuario</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input id="userid" type="hidden" value="0" />
+                <form id="userForm">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label for="txtNombre">Nombre</label>
+                                <input type="text" class="form-control required" id="txtNombre" name="nombre" autocomplete="off">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label for="txtApellido">Apellido</label>
+                                <input type="text" class="form-control required" id="txtApellido" name="apellido" autocomplete="off">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label for="txtCorreo">Correo</label>
+                                <input type="email" class="form-control required" id="txtCorreo" name="correo" autocomplete="off">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label for="txtClave">Clave</label>
+                                <input type="password" class="form-control required" id="txtClave" name="clave" autocomplete="off">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label for="cboEstado">Estado</label>
+                                <select id="cboEstado" class="form-select">
+                                    <option value="1">Activo</option>
+                                    <option value="0">No Activo</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" onclick="Guardar()">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 @section Scripts {
-    <!-- Incluir jQuery, DataTables, LoadingOverlay, Bootstrap y SweetAlert -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap4.min.js"></script>
@@ -67,7 +192,6 @@
                         console.error("Error cargando DataTable:", xhr.responseText);
                     },
                     "complete": function () {
-                        // Ocultar LoadingOverlay cuando se complete la carga de datos
                         $.LoadingOverlay("hide");
                     }
                 },
@@ -90,6 +214,25 @@
                     }
                 ]
             });
+            function abrirModal(json) {
+                $("#userid").val(0);
+                $("#txtNombre").val("");
+                $("#txtApellido").val("");
+                $("#txtCorreo").val("");
+                $("#txtClave").val("");
+                $("#cboEstado").val(1);
+
+                if (json != null) {
+                    $("#userid").val(json.IdUsuario);
+                    $("#txtNombre").val(json.Nombre);
+                    $("#txtApellido").val(json.Apellido);
+                    $("#txtCorreo").val(json.Correo);
+                    $("#txtClave").val(json.Clave);
+                    $("#cboEstado").val(json.Activo == true ? 1 : 0);
+                }
+
+                $('#UserFormModal').modal('show');
+            }
 
             // Evento para el botón "Agregar Usuario"
             $("#btnAgregar").click(function () {
